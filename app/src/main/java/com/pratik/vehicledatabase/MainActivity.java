@@ -105,12 +105,16 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void onDeleteViewHolder(RecyclerView.ViewHolder viewHolder){
+        String modelName = "Vehicle record";
+        if(viewHolder instanceof VehicleAdapter.VehicleViewHolder){
+            modelName = ((VehicleAdapter.VehicleViewHolder) viewHolder).tvMakeModel.getText().toString();
+        }
         int adapterPosition = viewHolder.getAdapterPosition();
         Vehicle toDelete = vehicles.get(viewHolder.getAdapterPosition());
         deleteQueue.add(toDelete);
         vehicles.remove(adapterPosition);
         vehicleAdapter.notifyItemRemoved(adapterPosition);
-        Snackbar.make(rView, "Vehicle record deleted", Snackbar.LENGTH_LONG)
+        Snackbar.make(rView, modelName + " deleted", Snackbar.LENGTH_LONG)
                 .setAction("UNDO", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

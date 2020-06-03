@@ -56,6 +56,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     private boolean forNewVehicle;
     private Vehicle vehicle;
     private VehicleViewModel viewModel;
+    private boolean hasImageChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +137,38 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private boolean hasChanged(){
+        String curMake = etMake.getText().toString().trim();
+        String curModel = etModel.getText().toString().trim();
+        String curVariant = etVariant.getText().toString().trim();
+        String curNumber  = etNumber.getText().toString().trim();
+
+        return hasImageChanged || !(curMake.equals(vehicle.getMake()) && curModel.equals(vehicle.getModel()) && curVariant.equals(vehicle.getVariant()) && curNumber.equals(vehicle.getVehicleNumber()));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!forNewVehicle && hasChanged()){
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("Do you want to save?")
+                    .setPositiveButton("Yes", (dialogInterface, i) -> {
+                        vehicle = editVehicle();
+                        viewModel.edit(vehicle);
+                        hasImageChanged = false;
+                        Toast.makeText(this, "Vehicle updated successfully", Toast.LENGTH_SHORT).show();
+                        dialogInterface.dismiss();
+                        super.onBackPressed();
+                    })
+                    .setNegativeButton("No", ((dialogInterface, i) -> {super.onBackPressed();}))
+                    .setNeutralButton("Cancel", ((dialogInterface, i) -> {dialogInterface.dismiss();}))
+                    .create();
+            dialog.show();
+        }
+        else{
+            super.onBackPressed();
+        }
+    }
+
     private String saveBitmapFromImageView(ImageView view){
         try {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) view.getDrawable();
@@ -209,6 +242,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     else{
                         vehicle = editVehicle();
                         viewModel.edit(vehicle);
+                        hasImageChanged = false;
                         Toast.makeText(this, "Vehicle updated successfully", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -269,6 +303,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                     Bitmap bitmap = (Bitmap) imageReturnedIntent.getExtras().get("data");
                     Bitmap resizedBitmpap = Bitmap.createScaledBitmap(bitmap, Constants.IM_WIDTH, Constants.IM_HEIGHT, false);
                     ivPhotoEdit.setImageBitmap(resizedBitmpap);
+                    hasImageChanged = true;
                 }
 
                 break;
@@ -286,6 +321,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 //                    Bitmap bitmap = (Bitmap) imageReturnedIntent.getExtras().get("data");
                     Bitmap resizedBitmpap = Bitmap.createScaledBitmap(bitmap, Constants.IM_WIDTH, Constants.IM_HEIGHT, false);
                     ivPhotoEdit.setImageBitmap(resizedBitmpap);
+                    hasImageChanged = true;
                 }
 
                 break;
