@@ -1,0 +1,2 @@
+rootProject.name='Vehicle database'
+include ':app'
