@@ -38,4 +38,8 @@ public class VehicleViewModel extends AndroidViewModel {
     LiveData<List<Vehicle>> getAllVehicles(){
         return vehicles;
     }
+
+    List<Vehicle> getVehiclesWithMakeAs(Vehicle vehicle){
+        return repo.getVehiclesWithMakeAs(vehicle);
+    }
 }

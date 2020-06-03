@@ -29,4 +29,7 @@ public interface VehicleDao {
 
     @Query("DELETE FROM vehicle_table WHERE id = :id")
     int delete(int id);
+
+    @Query("SELECT * FROM vehicle_table WHERE id != :id AND make LIKE :make")
+    List<Vehicle> getOtherVehiclesWithMake(String make, int id);
 }

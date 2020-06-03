@@ -59,6 +59,7 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="-40dp"
             android:gravity="center_horizontal"
+            android:animateLayoutChanges="true"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
@@ -212,6 +213,22 @@
                         android:src="@drawable/ic_arrow_up_black_24dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tv_more_similar_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="More from "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginHorizontal="10dp"
+                android:layout_gravity="start"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_details"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

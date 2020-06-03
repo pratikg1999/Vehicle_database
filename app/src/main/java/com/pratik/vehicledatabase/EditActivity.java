@@ -103,7 +103,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private Vehicle createVehicleFromData() {
-        return new Vehicle(etNumber.getText().toString(), etMake.getText().toString(), etModel.getText().toString(), etVariant.getText().toString(), saveBitmapFromImageView(ivPhotoEdit));
+        return new Vehicle(etNumber.getText().toString().trim(), etMake.getText().toString().trim(), etModel.getText().toString().trim(), etVariant.getText().toString().trim(), saveBitmapFromImageView(ivPhotoEdit));
     }
 
     private boolean validate() {
@@ -178,10 +178,10 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private Vehicle editVehicle(){
-        String curMake = etMake.getText().toString();
-        String curModel = etModel.getText().toString();
-        String curVariant = etVariant.getText().toString();
-        String curNumber  = etNumber.getText().toString();
+        String curMake = etMake.getText().toString().trim();
+        String curModel = etModel.getText().toString().trim();
+        String curVariant = etVariant.getText().toString().trim();
+        String curNumber  = etNumber.getText().toString().trim();
         vehicle.setMake(curMake);
         vehicle.setModel(curModel);
         vehicle.setVariant(curVariant);

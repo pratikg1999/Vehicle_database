@@ -44,4 +44,8 @@ public class VehicleRepository {
             vehicleDao.update(vehicle);
         });
     }
+
+    public List<Vehicle> getVehiclesWithMakeAs(Vehicle vehicle){
+        return vehicleDao.getOtherVehiclesWithMake(vehicle.getMake(), vehicle.getId());
+    }
 }
