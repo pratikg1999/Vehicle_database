@@ -60,10 +60,12 @@ public abstract class VehicleDatabase extends RoomDatabase {
                 // Populate the database in the background.
                 // If you want to start with more words, just add them.
                 VehicleDao dao = INSTANCE.getVehicleDao();
-                dao.deleteAll();
+//                dao.deleteAll();
 
-                Vehicle vehicle = new Vehicle("Test numver", "test make", "test model", "test var", null);
-                dao.insert(vehicle);
+                for(int i=0; i<5; i++) {
+                    Vehicle vehicle = new Vehicle("Test numver"+i, "test make"+i, "test model"+i, "test var"+i, null);
+                    dao.insert(vehicle);
+                }
             });
         }
     };

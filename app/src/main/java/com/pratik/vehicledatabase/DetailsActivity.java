@@ -1,7 +1,10 @@
 package com.pratik.vehicledatabase;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -34,6 +37,8 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
     private TextView tvModelInfo;
     private TextView tvVariantInfo;
     private TextView tvNumberInfo;
+    private Button btDeleteButton;
+    VehicleViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +56,16 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
         tvModelInfo = findViewById(R.id.tv_model_info);
         tvVariantInfo = findViewById(R.id.tv_variant_info);
         tvNumberInfo = findViewById(R.id.tv_number_info);
+        btDeleteButton = findViewById(R.id.bt_delete_details);
 
+        viewModel = new ViewModelProvider(this).get(VehicleViewModel.class);
         Intent intent = getIntent();
         String vehicleJson = intent.getStringExtra(Constants.VIEW_VEHICLE_KEY);
         Type type = new TypeToken<Vehicle>(){}.getType();
         vehicle = gson.fromJson(vehicleJson, type);
         prePopulate(vehicle);
         btEditButton.setOnClickListener(this);
+        btDeleteButton.setOnClickListener(this);
 
         btExpandButton.setOnClickListener((v)->{
             if(detailsContainer.getVisibility() == View.GONE) {
@@ -93,6 +101,27 @@ public class DetailsActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.bt_edit_details:
                 startActivity(new Intent(DetailsActivity.this, EditActivity.class).putExtra(Constants.EDIT_VEHICLE_KEY, gson.toJson(vehicle)));
                 finish();
+                break;
+            case R.id.bt_delete_details:
+                AlertDialog dialog = new AlertDialog.Builder(this)
+                        .setTitle("Confirm")
+                        .setMessage("Are you sure you want to delete")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                viewModel.delete(vehicle);
+                                dialogInterface.dismiss();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .create();
+                dialog.show();
                 break;
         }
     }

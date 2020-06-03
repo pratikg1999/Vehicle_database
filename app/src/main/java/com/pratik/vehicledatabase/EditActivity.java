@@ -14,6 +14,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -44,7 +46,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 
     private TextInputEditText etMake;
     private TextInputEditText etModel;
-    private TextInputEditText etVariant;
+    private AutoCompleteTextView etVariant;
     private TextInputEditText etNumber;
     private ImageView ivPhotoEdit;
     private Button btSave;
@@ -68,6 +70,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         btSave = findViewById(R.id.bt_save);
         btDelete = findViewById(R.id.bt_delete);
         btImgEdit = findViewById(R.id.bt_img_edit);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.select_dialog_item, Constants.VARIANTS);
+
 
         viewModel = new ViewModelProvider(this).get(VehicleViewModel.class);
         Intent intent = getIntent();
@@ -81,6 +85,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             prePopulateWith(vehicle);
         }
 
+//        etVariant.setThreshold(0);
+        etVariant.setAdapter(adapter);
         btSave.setOnClickListener(this);
         btDelete.setOnClickListener(this);
         btImgEdit.setOnClickListener(this);
@@ -261,7 +267,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                 if(resultCode == RESULT_OK){
                     Log.d("got image result", "onActivityResult: got the image data");
                     Bitmap bitmap = (Bitmap) imageReturnedIntent.getExtras().get("data");
-                    Bitmap resizedBitmpap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+                    Bitmap resizedBitmpap = Bitmap.createScaledBitmap(bitmap, Constants.IM_WIDTH, Constants.IM_HEIGHT, false);
                     ivPhotoEdit.setImageBitmap(resizedBitmpap);
                 }
 
@@ -278,7 +284,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                         e.printStackTrace();
                     }
 //                    Bitmap bitmap = (Bitmap) imageReturnedIntent.getExtras().get("data");
-                    Bitmap resizedBitmpap = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+                    Bitmap resizedBitmpap = Bitmap.createScaledBitmap(bitmap, Constants.IM_WIDTH, Constants.IM_HEIGHT, false);
                     ivPhotoEdit.setImageBitmap(resizedBitmpap);
                 }
 

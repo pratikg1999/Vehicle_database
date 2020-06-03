@@ -30,7 +30,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     VehicleViewModel viewModel;
     private Gson gson = new Gson();
     private String TAG = "in mainactivity";
+    VehicleAdapter vehicleAdapter;
+    Queue<Vehicle> deleteQueue = new LinkedList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         tvNoVehicles = findViewById(R.id.tv_no_vehicles);
 
         rView.setLayoutManager(new LinearLayoutManager(this));
-        VehicleAdapter vehicleAdapter = new VehicleAdapter(this);
+        vehicleAdapter = new VehicleAdapter(this);
         rView.setAdapter(vehicleAdapter);
 
         viewModel = new ViewModelProvider(this).get(VehicleViewModel.class);
@@ -84,32 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                        int adapterPosition = viewHolder.getAdapterPosition();
-                        Vehicle toDelete = vehicles.get(viewHolder.getAdapterPosition());
-                        vehicles.remove(adapterPosition);
-                        vehicleAdapter.notifyItemRemoved(adapterPosition);
-                        Snackbar.make(rView, "Vehicle record deleted", Snackbar.LENGTH_LONG)
-                                .setAction("UNDO", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        vehicles.add(adapterPosition, toDelete);
-                                        vehicleAdapter.notifyItemInserted(adapterPosition);
-                                    }
-                                })
-                                .addCallback(new Snackbar.Callback() {
-
-                                    @Override
-                                    public void onDismissed(Snackbar snackbar, int event) {
-                                        if(event!=DISMISS_EVENT_ACTION){
-                                            viewModel.delete(toDelete);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onShown(Snackbar snackbar) {
-                                    }
-                                })
-                                .show();
+                        onDeleteViewHolder(viewHolder);
                     }
                 };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
@@ -121,6 +101,46 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(new Intent(MainActivity.this, EditActivity.class), Constants.NEW_REQUEST_CODE);
             }
         });
+    }
+
+
+    private void onDeleteViewHolder(RecyclerView.ViewHolder viewHolder){
+        int adapterPosition = viewHolder.getAdapterPosition();
+        Vehicle toDelete = vehicles.get(viewHolder.getAdapterPosition());
+        deleteQueue.add(toDelete);
+        vehicles.remove(adapterPosition);
+        vehicleAdapter.notifyItemRemoved(adapterPosition);
+        Snackbar.make(rView, "Vehicle record deleted", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        vehicles.add(adapterPosition, toDelete);
+                        vehicleAdapter.notifyItemInserted(adapterPosition);
+                        deleteQueue.remove(toDelete);
+                    }
+                })
+                .addCallback(new Snackbar.Callback() {
+
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+//                        if(event!=DISMISS_EVENT_ACTION){
+//                            viewModel.delete(toDelete);
+//                        }
+                    }
+
+                    @Override
+                    public void onShown(Snackbar snackbar) {
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        while(deleteQueue.size()>0){
+            viewModel.delete(deleteQueue.poll());
+        }
     }
 
     @Override
@@ -181,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
             holder.deleteButton.setOnClickListener((v) -> {
-                viewModel.delete(curVehicle);
+                onDeleteViewHolder(holder);
             });
         }
 

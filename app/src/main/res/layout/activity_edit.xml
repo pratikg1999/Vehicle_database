@@ -91,10 +91,11 @@
                 android:layout_margin="10dp"
                 android:hint="Vehicle Variant">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                     android:id="@+id/et_variant"
                     android:inputType="textPersonName"
                     android:maxLines="1"
+                    android:completionThreshold="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="20dp" />
